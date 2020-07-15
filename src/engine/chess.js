@@ -1,5 +1,6 @@
 import { PieceType, PieceColor, PieceNames } from './constants';
-import { getMoveFunction } from './moves';
+//import { getMoveFunction } from './moves';
+import { getMoves } from './moves';
 import { findBoardIndices } from './board';
 import {
   getCellColor,
@@ -10,7 +11,9 @@ import {
   getPieceType,
 } from './utils';
 
+export { getMoves };
 
+/*
 export function getMoves(board, index) {
   const cell = board[index];
   const fn = getMoveFunction(cell);
@@ -23,6 +26,7 @@ export function getMoves(board, index) {
 
   return moves;
 }
+*/
 
 
 function distinguishIndex(index, dis) {

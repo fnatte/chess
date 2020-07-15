@@ -1,10 +1,10 @@
 import { map } from 'ramda';
 import * as R from 'ramda';
 
-import { createBoard, emptyBoard, placePiece } from '../../../src/engine/board';
-import { PieceType, PieceColor } from '../../../src/engine/constants';
-import { getIndexFromSAN } from '../../../src/engine/utils';
-import { san, sanBuildBoard } from '../../../src/san';
+import { createBoard, emptyBoard, placePiece } from '../../src/engine/board';
+import { PieceType, PieceColor } from '../../src/engine/constants';
+import { getIndexFromSAN } from '../../src/engine/utils';
+import { san, sanBuildBoard } from '../../src/san';
 import {
   getPawnMoves,
   getRookMoves,
@@ -12,7 +12,7 @@ import {
   getKingMoves,
   getMoves,
   test,
-} from '../../../src/engine/moves/pawn';
+} from '../../src/engine/moves';
 
 const {
   getToCell,

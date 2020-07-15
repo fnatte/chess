@@ -1,220 +1,181 @@
-import { PieceType, PieceColor, Direction } from './constants';
+import { apply, curry, compose, flatten, map,
+         allPass, pipe, ifElse, prop, complement,
+         propSatisfies, assoc, evolve, inc, dec,
+         always, add, subtract, last, converge, __,
+         anyPass, identity, lift, concat, flip, is,
+         until, append, when, juxt, equals, call } from 'ramda';
+
 import {
   getCellColor,
   getCellPiece,
+  getPieceName,
   isCellColor,
   isEmptyCell,
   isOpponent,
+  isFriendly,
   isWhite,
+  isBlack,
+  getXFromIndex,
+  getYFromIndex,
   getXYFromIndex,
   getIndexFromXY,
   isValidXY,
   isValidIndex,
 } from './utils';
 
-import { getPawnMoves } from './moves/pawn';
+// Helper functions
+const invalidate = always(-1);
+const isALane = pipe(getXFromIndex, equals(0));
+const isHLane = pipe(getXFromIndex, equals(7));
+const isSecondRank = pipe(getYFromIndex, equals(1));
+const isSeventhRank = pipe(getYFromIndex, equals(6));
+const isNotALane = complement(isALane);
+const isNotHLane = complement(isHLane);
 
-const isALane = index => index % 8 === 0;
-const isHLane = index => index % 8 === 7;
+// Index movers in form f(index) => index
+const moveIndexLeft = ifElse(allPass([isValidIndex, isNotALane]), dec, invalidate);
+const moveIndexRight = ifElse(allPass([isValidIndex, isNotHLane]), inc, invalidate);
+const moveIndexUp = ifElse(isValidIndex, add(8), invalidate);
+const moveIndexDown = ifElse(isValidIndex, subtract(__, 8), invalidate);
+const moveIndexUpLeft = pipe(moveIndexLeft, moveIndexUp);
+const moveIndexUpRight = pipe(moveIndexRight, moveIndexUp);
+const moveIndexDownLeft = pipe(moveIndexLeft, moveIndexDown);
+const moveIndexDownRight = pipe(moveIndexRight, moveIndexDown);
 
-const moveLeft = index => (isValidIndex(index) && !isALane(index)) ? index - 1 : -1;
-const moveRight = index => (isValidIndex(index) && !isHLane(index)) ? index + 1 : -1;
-const moveUp = index => isValidIndex(index) ? index + 8 : -1;
-const moveDown = index => isValidIndex(index) ? index - 8 : -1;
-const moveUpLeft = index => moveUp(moveLeft(index));
-const moveUpRight = index => moveUp(moveRight(index));
-const moveDownLeft = index => moveDown(moveLeft(index));
-const moveDownRight = index => moveDown(moveRight(index));
+// Build knight move indexes by taking piping the same move twice,
+// followed by another move in a lift (which will make all combinations).
+const knightLift = lift((f, g) => pipe(f, f, g));
+const knightCoverger = converge(concat, [knightLift, flip(knightLift)]);
+const moveIndicesKnight = knightCoverger(
+    [moveIndexUp, moveIndexDown],
+    [moveIndexLeft, moveIndexRight],
+);
+
+// State helpers
+const getToCell = state => state.board[state.to];
+const getFromCell = state => state.board[state.from];
+const getLastMove = pipe(prop('moves'), last);
+const getLastMoveCell = state => state.board[getLastMove(state)];
+const getMyColor = pipe(getFromCell, getCellColor);
+
+
+// State transformers
+const moveLeft = evolve({ to: moveIndexLeft });
+const moveRight = evolve({ to: moveIndexRight });
+const moveUp = evolve({ to: moveIndexUp });
+const moveDown = evolve({ to: moveIndexDown });
+const moveUpLeft = evolve({ to: moveUpLeft });
+const moveUpRight = evolve({ to: moveUpRight });
+const moveDownLeft = evolve({ to: moveDownLeft });
+const moveDownRight = evolve({ to: moveDownRight });
+
+const knightMoves = moveIndicesKnight.map(move => evolve({ to: move }));
 
 const diagonalMoves = [ moveUpLeft, moveUpRight, moveDownLeft, moveDownRight ];
 const straightMoves = [ moveLeft, moveRight, moveUp, moveDown ];
 const straightAndDiagonalMoves = straightMoves.concat(diagonalMoves);
 
-const limitMove = (move, limit) => {
-  let count = 0;
-  return index => ++count <= limit ? move(index) : -1;
-};
-const limitMoves = (moves, limit) => moves.map(move => limitMove(move, limit));
+const pawnMover = ifElse(
+    pipe(getFromCell, isWhite),
+    moveUp,
+    moveDown,
+);
 
-function shouldAddMove(board, myColor, moves, index) {
-  // Last move was capture
-  if (moves.length > 0 && isOpponent(board[moves[moves.length - 1]], myColor)) {
-    return false;
-  }
+// Returns 1 if the pawn has moved, otherwise it returns 2.
+const pawnLimit = state =>
+  ((isWhite(getFromCell(state)) && isSecondRank(state.from)) ||
+   (isBlack(getFromCell(state)) && isSeventhRank(state.from))) ? 2 : 1;
 
-  // Check bounds and make sure we don't go into own piece
-  return isValidIndex(index) && !isCellColor(board[index], myColor);
-}
+// State predicates
+const limitF = curry((limiter, state) => (state.moves.length < limiter(state)));
+const limitN = n => limitF(always(n));
+const limitOne = limitN(1);
 
-function getMovesByMover(board, fromIndex, mover) {
-  const moves = [];
-  const myColor = getCellColor(board[fromIndex]);
-  let index = mover(fromIndex);
+const isValidState = pipe(prop('to'), isValidIndex);
+const isEmptyCellCond = pipe(getToCell, isEmptyCell);
+const isOpponentCond = converge(isOpponent, [getToCell, getMyColor]);
+const isFriendlyCond = converge(isFriendly, [getToCell, getMyColor]);
+const didCaptureCond = allPass([
+    getLastMove,
+    converge(isOpponent, [getLastMoveCell, getMyColor]),
+]);
+const basicCond = complement(anyPass([didCaptureCond, isFriendlyCond]));
 
-  while (shouldAddMove(board, myColor, moves, index)) {
-    moves.push(index);
-    index = mover(index);
-  }
 
-  return moves;
-}
+// Helper functions used in buildMoves().
+const saveMove = state => assoc('moves', append(state.to, state.moves), state);
+const emptyState = (board, from) => ({ board, from, to: from, moves: [] });
 
-const getMoves = (board, fromIndex) => (mover, condition) => {
-  const moves = [];
-  let index = mover(fromIndex);
+// Function to build a list of move indices using a iterator and predicate.
+// It will keep calling the iterator as long as the predicate returns true,
+// and add a move index each iteration.
+const buildMoves = (fn, pred) => pipe(
+    emptyState,
+    fn,
+    until(
+      complement(allPass([ isValidState, pred ])),
+      pipe(saveMove, fn),
+    ),
+    prop('moves'),
+);
 
-  while (isValidIndex(index, board) && condition(fromIndex, index, board, moves)) {
-    moves.push(index);
-    index = mover(index);
-  }
+// Function used to build a movement getter function, fn(board, index), from
+// a list of movement descriptors.
+const buildMovesGetter = descs => pipe(juxt(map(apply(buildMoves), descs)), flatten);
 
-  return moves;
-};
-
-function getMovesByMovers(board, fromIndex, movers) {
-  return movers.reduce((moves, mover) => (
-      moves.concat(getMovesByMover(board, fromIndex, mover))
-  ), []);
-}
-
-function isEmptyOrOpponent(board, fromIndex, toIndex) {
-  const fromPiece = board[fromIndex];
-  const toPiece = board[toIndex];
-
-  return toPiece === 0 || fromPiece & 0xF0 === toPiece & 0xF0;
-}
-
-function getKnightMoves(board, index) {
-  const { x, y } = getXYFromIndex(index);
-
-  const moves = [
-    { x: x + 2, y: y + 1 },
-    { x: x + 2, y: y - 1 },
-    { x: x - 2, y: y + 1 },
-    { x: x - 2, y: y - 1 },
-    { x: x + 1, y: y + 2 },
-    { x: x + 1, y: y - 2 },
-    { x: x - 1, y: y + 2 },
-    { x: x - 1, y: y - 2 },
-  ];
-
-  return moves.filter(isValidXY)
-    .map(getIndexFromXY)
-    .filter(toIndex => isEmptyOrOpponent(board, index, toIndex));
-}
-
-const isOpponentInMove = (board, fromIndex, move) => {
-  const color = getCellColor(board[fromIndex]);
-  const toIndex = move(fromIndex);
-
-  return isValidIndex(toIndex) && isOpponent(board[toIndex], color);
+// Movement descriptions for all pieces.
+const moveDescriptions = {
+  pawn: [
+    [ pawnMover, allPass([ isEmptyCellCond, limitF(pawnLimit)]) ],
+    [ pipe(pawnMover, moveLeft), allPass([ isOpponentCond, limitOne ]) ],
+    [ pipe(pawnMover, moveRight), allPass([ isOpponentCond, limitOne ]) ],
+  ],
+  rook: straightMoves.map(move => [ move, basicCond ]),
+  bishop: diagonalMoves.map(move => [ move, basicCond ]),
+  queen: straightAndDiagonalMoves.map(move => [ move, basicCond ]),
+  king: straightMoves.map(move => [ move, allPass([ basicCond, limitOne ]) ]),
+  knight: knightMoves.map(move => [ move, allPass([ basicCond, limitOne ]) ]),
 };
 
-// function getPawnMoves(board, index) {
-//   const { x, y } = getXYFromIndex(index);
-//   const color = getCellColor(board[index]);
-//   const moves = [];
-//
-//   // Forward move
-//   moves.push(getIndexFromXY({
-//     x,
-//     y: color === PieceColor.white ? y + 1 : y - 1,
-//   }));
-//
-//   // Double jump
-//   if (color === PieceColor.white && y === 1) {
-//     moves.push(getIndexFromXY({ x, y: 3 }));
-//   } else if (color === PieceColor.black && y === 7) {
-//     moves.push(getIndexFromXY({ x, y: 5 }));
-//   }
-//
-//   // Capture
-//   if (color === PieceColor.white) {
-//     if (isOpponentInMove(board, index, moveUpLeft)) {
-//       moves.push(moveUpLeft(index));
-//     }
-//     if (isOpponentInMove(board, index, moveUpRight)) {
-//       moves.push(moveUpRight(index));
-//     }
-//   } else {
-//     if (isOpponentInMove(board, index, moveUpLeft)) {
-//       moves.push(moveUpLeft(index));
-//     }
-//     if (isOpponentInMove(board, index, moveUpRight)) {
-//       moves.push(moveUpRight(index));
-//     }
-//
-//   }
-//
-//   return moves
-//     .filter(toIndex => isEmptyOrOpponent(board, index, toIndex));
-// }
-//
-//
+const moveGetters = map(buildMovesGetter, moveDescriptions);
 
-// const flatten = arr => arr.reduce((a, b) => a.concat(b), []);
-// const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args)));
-// 
-// const pawnMove = (index, board) => isWhite(board[index]) ?
-//   moveUp(index) :
-//   moveDown(index);
-// const pawnCaptureLeftMove = compose(moveLeft, pawnMove);
-// const pawnCaptureRightMove = compose(moveRight, pawnMove);
-// 
-// const isEmptyCellCond = (fromIndex, toIndex, board, moves) =>
-//   isEmptyCell(board[toIndex]);
-// 
-// const isOpponentCond = (fromIndex, toIndex, board, moves) =>
-//   isOpponent(board[toIndex], getCellColor(board[fromIndex]));
-// 
-// const pawn = [
-//   [ pawnMove, isEmptyCell ],
-//   [ pawnCaptureLeftMove, isOpponentCond ],
-//   [ pawnCaptureRightMove, isOpponentCond ],
-// ];
-// 
-// const pawner = moveResolver => flatten(pawn.map(x => moveResolver.apply(null, x)));
-// const moveBuilder = moveDescriptions => (board, fromIndex) => {
-//   const moveResolver = getMoves(board, fromIndex);
-//   return flatten(moveDescriptions.map(...x => moveResolver(...x)));
-// };
-// 
-// const moveBuider = moveDescriptions => compose(
-// );
-// 
-// const getPawnMoves = compose(pawner, getMoves);
-// 
-// 
-// const getPawnMoves = (board, fromIndex) => {
-//   const m = getMoves(board, fromIndex);
-//   return flatten([
-//       m(pawnMove, isEmptyCellCond),
-//       m(pawnCaptureLeftMove, isOpponentCond),
-//       m(pawnCaptureRightMove, isOpponentCond),
-//   ]);
+const getMovesFunctionByCell = pipe(
+  getCellPiece, getPieceName, prop(__, moveGetters)
+);
+
+// export const getMoves = (board, index) => 
+//     pipe(prop(index, board), getMovesFunctionByCell)(board, index);
+
+export const getMoves = (board, index) =>
+  getMovesFunctionByCell(board[index])(board, index);
+
+/*
+export const getMoves = converge(
+  call,
+  pipe(flip(prop), getMovesFunctionByCell),
+  identity,
+);
+*/
+
+// const getMoves = (board, index) => {
+//   return moveGetters[getPieceName(board[index])](board, index);
 // };
 
-const getRookMoves = (board, fromIndex) =>
-  getMovesByMovers(board, fromIndex, straightMoves);
+export const getPawnMoves = moveGetters.pawn;
+export const getRookMoves = moveGetters.rook;
+export const getBishopMoves = moveGetters.bishop;
+export const getQueenMoves = moveGetters.queen;
+export const getKingMoves = moveGetters.king;
+export const getKnightMoves = moveGetters.knight;
 
-const getBishopMoves = (board, fromIndex) =>
-  getMovesByMovers(board, fromIndex, diagonalMoves);
-
-const getQueenMoves = (board, fromIndex) =>
-  getMovesByMovers(board, fromIndex, straightAndDiagonalMoves);
-
-const getKingMoves = (board, fromIndex) =>
-  getMovesByMovers(board, fromIndex, limitMoves(straightAndDiagonalMoves, 1));
-
-const moveFunctions = {};
-moveFunctions[PieceType.knight] = getKnightMoves;
-moveFunctions[PieceType.pawn] = getPawnMoves;
-moveFunctions[PieceType.rook] = getRookMoves;
-moveFunctions[PieceType.bishop] = getBishopMoves;
-moveFunctions[PieceType.queen] = getQueenMoves;
-moveFunctions[PieceType.king] = getKingMoves;
-
-export function getMoveFunction(cell) {
-  return moveFunctions[getCellPiece(cell)];
-}
+export const test = {
+  moveLeft,
+  isEmptyCellCond,
+  pawnMover,
+  getToCell,
+  isFriendlyCond,
+  getLastMove,
+  knightMoves,
+  getMovesFunctionByCell,
+};
 

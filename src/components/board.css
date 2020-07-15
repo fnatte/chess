@@ -64,7 +64,7 @@
 
   /* bottom */
   &:nth-child(-n+8):after {
-    bottom: -var(--infoSize);
+    bottom: calc(-1 * var(--infoSize));
     left: 0;
     width: var(--cellSize);
     height: var(--infoSize);
