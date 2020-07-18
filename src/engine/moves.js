@@ -143,7 +143,7 @@ const getMovesFunctionByCell = pipe(
   getCellPiece, getPieceName, prop(__, moveGetters)
 );
 
-// export const getMoves = (board, index) => 
+// export const getMoves = (board, index) =>
 //     pipe(prop(index, board), getMovesFunctionByCell)(board, index);
 
 export const getMoves = (board, index) =>
