@@ -1,10 +1,8 @@
-import { PieceType, PieceColor, PieceNames } from "./constants";
+import { PieceColor } from "./constants";
 // import { getMoveFunction } from './moves';
 import { getMoves } from "./moves";
 import { findBoardIndices } from "./board";
 import {
-  getCellColor,
-  getColorName,
   getXYFromSAN,
   getXYFromIndex,
   getIndexFromSAN,
@@ -40,6 +38,8 @@ function distinguishIndex(index, dis) {
 }
 
 export function validateMove(game, move) {
+  /* eslint-disable no-bitwise */
+
   const destIndex = getIndexFromSAN(move.dest);
 
   // Find matching pieces
@@ -70,6 +70,8 @@ export function validateMove(game, move) {
     fromIndex: indices[matchingIndices.indexOf(true)],
     toIndex: destIndex,
   };
+
+  /* eslint-enable no-bitwise */
 }
 
 export function nextTurn(game) {

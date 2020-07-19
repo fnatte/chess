@@ -1,4 +1,4 @@
-import { PieceType, PieceColor } from "./engine/constants";
+import { PieceColor } from "./engine/constants";
 import { getIndexFromSAN, getPieceType } from "./engine/utils";
 import { emptyBoard, placePiece } from "./engine/board";
 
@@ -41,6 +41,7 @@ function parsePieceType(input) {
   return res !== null ? getPieceType(res[1]) : null;
 }
 
+/* eslint-disable no-param-reassign */
 function build(obj, propName, parseFunc, str) {
   const val = parseFunc(str);
   if (val !== null && val !== -1) {
@@ -56,10 +57,10 @@ function build(obj, propName, parseFunc, str) {
 
     obj[propName] = [obj[propName], val];
   }
-
-  return obj;
 }
+/* eslint-enable no-param-reassign */
 
+/* eslint-disable no-shadow */
 export function san(input) {
   const obj = input.split(" ").reduce((obj, str) => {
     build(obj, "color", parseColor, str);
@@ -71,6 +72,7 @@ export function san(input) {
   const vals = Object.values(obj);
   return vals.length === 1 ? vals[0] : obj;
 }
+/* eslint-enable no-shadow */
 
 export function sanBuildBoard(input) {
   return input

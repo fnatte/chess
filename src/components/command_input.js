@@ -1,13 +1,12 @@
 import xs from "xstream";
 import debounce from "xstream/extra/debounce";
 import throttle from "xstream/extra/throttle";
-import dropRepeats from "xstream/extra/dropRepeats";
 import sampleCombine from "xstream/extra/sampleCombine";
 import { html } from "snabbdom-jsx";
-import { div, form, label, input, h1 } from "@cycle/dom";
+import { div, input } from "@cycle/dom";
 import styles from "./command_input.css";
 import { parseMove } from "../san";
-import { validateMove, makeMove } from "../engine/chess";
+import { validateMove } from "../engine/chess";
 import { moveCommand } from "../engine/command";
 
 const NO_FEEDBACK = { text: "", status: "" };
@@ -92,7 +91,7 @@ function model(action$, initialState) {
 
   const inputStartedReducer$ = action$
     .filter((a) => a.type === "INPUT_STARTED")
-    .map((action) => (state) => ({ ...state, feedback: NO_FEEDBACK }));
+    .map(() => (state) => ({ ...state, feedback: NO_FEEDBACK }));
 
   const gameReducer$ = action$
     .filter((a) => a.type === "GAME_CHANGED")
@@ -100,7 +99,7 @@ function model(action$, initialState) {
 
   const commandSentReducer$ = action$
     .filter((a) => a.type === "SEND_MOVE_COMMAND")
-    .map((action) => (state) => ({
+    .map(() => (state) => ({
       ...state,
       inputValue: "",
       feedback: NO_FEEDBACK,
@@ -122,12 +121,7 @@ function model(action$, initialState) {
   const command$ = action$
     .filter((a) => a.type === "SEND_MOVE_COMMAND")
     .compose(sampleCombine(state$))
-    // .map(([action, state]) => validateMove(state.game.board, action.payload))
-    .map(([action, state]) => {
-      const move = validateMove(state.game, action.payload);
-      console.log(action.payload, move);
-      return move;
-    })
+    .map(([action, state]) => validateMove(state.game.board, action.payload))
     .filter((res) => !res.error)
     .map((res) => moveCommand(res.fromIndex, res.toIndex));
 
@@ -158,7 +152,7 @@ function view(state$) {
   });
 }
 
-export function CommandInput(sources) {
+export default function CommandInput(sources) {
   const initialState = {
     game: null,
     inputValue: "",

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
-    "lint": "eslint src/**",
+    "lint": "eslint --fix 'src/**/*.js'",
     "test": "jest"
   },
   "author": "Matteus Hemström",
@@ -22,6 +22,7 @@
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx": "^0.1.0",
     "file-loader": "^6.0.0",
     "husky": "^4.2.5",
     "jest": "^26.1.0",
@@ -50,6 +51,7 @@
     }
   },
   "lint-staged": {
-    "*.{js,css,md}": "prettier --write"
+    "*.js": ["eslint --fix", "prettier --write"],
+    "*.{css,md}": "prettier --write"
   }
 }

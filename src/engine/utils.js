@@ -4,6 +4,8 @@ import { PieceColor, PieceNames } from "./constants";
  * Cell utils
  */
 
+/* eslint-disable no-bitwise */
+
 export function getCellColor(cell) {
   return cell & 0xf0;
 }
@@ -11,6 +13,8 @@ export function getCellColor(cell) {
 export function getCellPiece(cell) {
   return cell & 0x0f;
 }
+
+/* eslint-enable no-bitwise */
 
 export function getColorName(color) {
   return color === PieceColor.white ? "white" : "black";
@@ -71,10 +75,10 @@ export function getXYFromSAN(pos) {
   let x;
   let y;
 
-  if (pos.length == 1) {
+  if (pos.length === 1) {
     y = parseInt(pos.charAt(0), 10) - 1;
     x = -1;
-    if (isNaN(y)) {
+    if (Number.isNaN(y)) {
       x = parseInt(pos.charAt(0), 18) - 10;
       y = -1;
     }

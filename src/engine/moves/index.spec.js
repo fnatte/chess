@@ -1,8 +1,6 @@
 import { map } from "ramda";
-import * as R from "ramda";
 
 import { createBoard, emptyBoard, placePiece } from "../board";
-import { PieceType, PieceColor } from "../constants";
 import { getIndexFromSAN } from "../utils";
 import { san, sanBuildBoard } from "../../san";
 import {
@@ -23,7 +21,6 @@ const {
   moveLeft,
   isFriendlyCond,
   getLastMove,
-  knightMoves,
   getMovesFunctionByCell,
 } = test;
 

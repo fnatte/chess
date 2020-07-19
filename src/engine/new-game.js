@@ -1,7 +1,7 @@
 import { createBoard } from "./board";
 import { PieceColor } from "./constants";
 
-export function newGame() {
+export default function newGame() {
   return {
     board: createBoard(),
     turn: PieceColor.white,

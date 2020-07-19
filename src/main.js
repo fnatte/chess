@@ -2,15 +2,15 @@ import xs from "xstream";
 import { run } from "@cycle/xstream-run";
 import { div, makeDOMDriver } from "@cycle/dom";
 import isolate from "@cycle/isolate";
-import { newGame } from "./engine/game";
-import { makeMove } from "./engine/chess";
+import newGame from "./engine/new-game";
 import { PieceColor } from "./engine/constants";
-import { AI } from "./engine/ai";
-import { Board } from "./components/board";
-import { CommandInput } from "./components/command_input";
+import AI from "./engine/ai";
+import Board from "./components/board";
+import CommandInput from "./components/command_input";
 import styles from "./main.css";
-import { preventDefaultSinkDriver } from "./prevent_default_sink_driver";
+import preventDefaultSinkDriver from "./prevent_default_sink_driver";
 
+// eslint-disable-next-line
 require("file-loader?name=[name].[ext]!./index.html");
 
 function main({ DOM }) {

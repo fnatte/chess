@@ -1,3 +1,5 @@
+/* eslint-disable no-bitwise */
+
 import { PieceType, PieceColor } from "./constants";
 
 export function emptyBoard() {
@@ -14,7 +16,7 @@ export function findBoardIndices(board, fn) {
   }, []);
 }
 
-export function cell(pieceType, pieceColor) {
+export function getCellValue(pieceType, pieceColor) {
   return pieceType | pieceColor;
 }
 
@@ -52,7 +54,7 @@ export function createBoard() {
 
 export function placePiece(board, desc) {
   const newBoard = board.slice();
-  newBoard[desc.index] = cell(desc.type, desc.color);
+  newBoard[desc.index] = getCellValue(desc.type, desc.color);
 
   return newBoard;
 }
