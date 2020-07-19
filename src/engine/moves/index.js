@@ -110,23 +110,8 @@ const getMovesFunctionByCell = pipe(
   prop(__, moveGetters)
 );
 
-// export const getMoves = (board, index) =>
-//     pipe(prop(index, board), getMovesFunctionByCell)(board, index);
-
 export const getMoves = (board, index) =>
   getMovesFunctionByCell(board[index])(board, index);
-
-/*
-export const getMoves = converge(
-  call,
-  pipe(flip(prop), getMovesFunctionByCell),
-  identity,
-);
-*/
-
-// const getMoves = (board, index) => {
-//   return moveGetters[getPieceName(board[index])](board, index);
-// };
 
 export const getPawnMoves = moveGetters.pawn;
 export const getRookMoves = moveGetters.rook;

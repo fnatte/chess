@@ -1,5 +1,4 @@
 import { PieceColor } from "./constants";
-// import { getMoveFunction } from './moves';
 import { getMoves } from "./moves";
 import { findBoardIndices } from "./board";
 import {
@@ -8,23 +7,6 @@ import {
   getIndexFromSAN,
   getPieceType,
 } from "./utils";
-
-export { getMoves };
-
-/*
-export function getMoves(board, index) {
-  const cell = board[index];
-  const fn = getMoveFunction(cell);
-  if (fn === undefined) {
-    console.warn('No movement function defined for ' + PieceNames[cell]);
-    return [];
-  }
-
-  const moves = fn(board, index);
-
-  return moves;
-}
-*/
 
 function distinguishIndex(index, dis) {
   if (dis === undefined) {
