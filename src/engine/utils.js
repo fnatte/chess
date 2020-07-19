@@ -68,7 +68,8 @@ export function getIndexFromXY(xy) {
 }
 
 export function getXYFromSAN(pos) {
-  let x, y;
+  let x;
+  let y;
 
   if (pos.length == 1) {
     y = parseInt(pos.charAt(0), 10) - 1;

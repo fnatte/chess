@@ -1,5 +1,3 @@
-require("file-loader?name=[name].[ext]!./index.html");
-
 import xs from "xstream";
 import { run } from "@cycle/xstream-run";
 import { div, makeDOMDriver } from "@cycle/dom";
@@ -13,6 +11,8 @@ import { CommandInput } from "./components/command_input";
 import styles from "./main.css";
 import { preventDefaultSinkDriver } from "./prevent_default_sink_driver";
 
+require("file-loader?name=[name].[ext]!./index.html");
+
 function main({ DOM }) {
   const commandProxy$ = xs.create();
 
@@ -23,7 +23,7 @@ function main({ DOM }) {
     DOM,
     props: {
       playerColor: PieceColor.white,
-      game$: game$,
+      game$,
     },
   });
 
@@ -38,14 +38,14 @@ function main({ DOM }) {
   commandProxy$.imitate(command$);
 
   const board = isolate(Board)({
-    DOM: DOM,
+    DOM,
     props: { board$: game$.map((game) => game.board) },
   });
 
   const vdom$ = xs
     .combine(board.DOM, cmdInput.DOM)
     .map(([boardVDom$, cmdInput$]) =>
-      div("." + styles.container, [boardVDom$, cmdInput$])
+      div(`.${styles.container}`, [boardVDom$, cmdInput$])
     );
 
   const prevented$ = cmdInput.prevented;

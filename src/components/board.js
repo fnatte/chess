@@ -1,8 +1,8 @@
 import xs from "xstream";
-import { PieceChar } from "../engine/constants";
 import { div, label, input, h1 } from "@cycle/dom";
-import styles from "./board.css";
 import { html } from "snabbdom-jsx";
+import { PieceChar } from "../engine/constants";
+import styles from "./board.css";
 
 export function Board(sources) {
   // const vdom$ = sources.props.board$

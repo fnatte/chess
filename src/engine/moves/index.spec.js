@@ -151,7 +151,7 @@ describe("getRookMoves()", () => {
     expectMoves(getRookMoves(board, san("e4")), san("e3 e2 e5 e6 f4 g4 d4 c4"));
   });
   it("it should be blocked by friendly pieces", () => {
-    let board = sanBuildBoard(
+    const board = sanBuildBoard(
       "white R e2, white P e1, white P e3, white P d2, white P f2"
     );
     expect(getRookMoves(board, san("e2"))).toHaveLength(0);

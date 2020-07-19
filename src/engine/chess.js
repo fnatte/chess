@@ -1,5 +1,5 @@
 import { PieceType, PieceColor, PieceNames } from "./constants";
-//import { getMoveFunction } from './moves';
+// import { getMoveFunction } from './moves';
 import { getMoves } from "./moves";
 import { findBoardIndices } from "./board";
 import {
