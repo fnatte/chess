@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server",
+    "lint": "eslint src/**",
     "test": "jest"
   },
   "author": "Matteus Hemström",
@@ -17,12 +18,19 @@
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "chai": "^4.2.0",
     "css-loader": "^3.6.0",
+    "eslint": "^7.5.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
     "file-loader": "^6.0.0",
+    "husky": "^4.2.5",
     "jest": "^26.1.0",
     "jest-extended": "^0.11.5",
+    "lint-staged": "^10.2.11",
     "mocha": "^8.0.1",
     "postcss-loader": "^3.0.0",
     "postcss-preset-env": "^6.7.0",
+    "prettier": "^2.0.5",
     "style-loader": "^1.2.1",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12",
@@ -35,5 +43,13 @@
     "ramda": "^0.27.0",
     "snabbdom-jsx": "^0.4.2",
     "xstream": "^11.12.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,css,md}": "prettier --write"
   }
 }
