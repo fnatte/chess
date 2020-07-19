@@ -58,7 +58,7 @@ const moveIndicesKnight = knightCoverger(
 
 const knightMoves = moveIndicesKnight.map((move) => evolve({ to: move }));
 
-const pawnMover = ifElse(pipe(getFromCell, isWhite), moveUp, moveDown);
+const pawnMove = ifElse(pipe(getFromCell, isWhite), moveUp, moveDown);
 
 // Returns 1 if the pawn has moved, otherwise it returns 2.
 const pawnLimit = (state) =>
@@ -91,9 +91,9 @@ const buildMovesGetter = (descs) =>
 // Movement descriptions for all pieces.
 const moveDescriptions = {
   pawn: [
-    [pawnMover, allPass([isEmptyCellCond, limitF(pawnLimit)])],
-    [pipe(pawnMover, moveLeft), allPass([isOpponentCond, limitOne])],
-    [pipe(pawnMover, moveRight), allPass([isOpponentCond, limitOne])],
+    [pawnMove, allPass([isEmptyCellCond, limitF(pawnLimit)])],
+    [pipe(pawnMove, moveLeft), allPass([isOpponentCond, limitOne])],
+    [pipe(pawnMove, moveRight), allPass([isOpponentCond, limitOne])],
   ],
   rook: straightMoves.map((move) => [move, basicCond]),
   bishop: diagonalMoves.map((move) => [move, basicCond]),
@@ -138,7 +138,7 @@ export const getKnightMoves = moveGetters.knight;
 export const test = {
   moveLeft,
   isEmptyCellCond,
-  pawnMover,
+  pawnMove,
   getToCell,
   isFriendlyCond,
   getLastMove,

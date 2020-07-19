@@ -17,7 +17,7 @@ import {
 const {
   getToCell,
   isEmptyCellCond,
-  pawnMover,
+  pawnMove,
   moveLeft,
   isFriendlyCond,
   getLastMove,
@@ -58,20 +58,20 @@ describe("isEmptyCellCond()", () => {
   });
 });
 
-describe("pawnMover()", () => {
+describe("pawnMove()", () => {
   it("should move up white pieces", () => {
     const e4 = san("e4");
     const e5 = san("e5");
     const board = placePiece(emptyBoard(), san("e4 white P"));
 
-    expect(pawnMover({ board, from: e4, to: e4 })).toHaveProperty("to", e5);
+    expect(pawnMove({ board, from: e4, to: e4 })).toHaveProperty("to", e5);
   });
   it("should move down black pieces", () => {
     const e4 = san("e4");
     const e3 = san("e3");
     const board = placePiece(emptyBoard(), san("e4 black P"));
 
-    expect(pawnMover({ board, from: e4, to: e4 })).toHaveProperty("to", e3);
+    expect(pawnMove({ board, from: e4, to: e4 })).toHaveProperty("to", e3);
   });
 });
 
