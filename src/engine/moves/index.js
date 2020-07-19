@@ -21,26 +21,33 @@ import {
   getIndexFromXY,
   isValidXY,
   isValidIndex,
-} from './utils';
+} from '../utils';
 
-// Helper functions
-const invalidate = always(-1);
-const isALane = pipe(getXFromIndex, equals(0));
-const isHLane = pipe(getXFromIndex, equals(7));
-const isSecondRank = pipe(getYFromIndex, equals(1));
-const isSeventhRank = pipe(getYFromIndex, equals(6));
-const isNotALane = complement(isALane);
-const isNotHLane = complement(isHLane);
-
-// Index movers in form f(index) => index
-const moveIndexLeft = ifElse(allPass([isValidIndex, isNotALane]), dec, invalidate);
-const moveIndexRight = ifElse(allPass([isValidIndex, isNotHLane]), inc, invalidate);
-const moveIndexUp = ifElse(isValidIndex, add(8), invalidate);
-const moveIndexDown = ifElse(isValidIndex, subtract(__, 8), invalidate);
-const moveIndexUpLeft = pipe(moveIndexLeft, moveIndexUp);
-const moveIndexUpRight = pipe(moveIndexRight, moveIndexUp);
-const moveIndexDownLeft = pipe(moveIndexLeft, moveIndexDown);
-const moveIndexDownRight = pipe(moveIndexRight, moveIndexDown);
+import {
+  getFromCell,
+  getToCell,
+  getLastMove,
+  moveIndexUp,
+  moveIndexDown,
+  moveIndexLeft,
+  moveIndexRight,
+  moveUp,
+  moveDown,
+  moveLeft,
+  moveRight,
+  isEmptyCellCond,
+  isOpponentCond,
+  isValidState,
+  isFriendlyCond,
+  isSecondRank,
+  isSeventhRank,
+  limitF,
+  limitOne,
+  straightMoves,
+  diagonalMoves,
+  straightAndDiagonalMoves,
+  basicCond,
+} from './helpers';
 
 // Build knight move indexes by taking piping the same move twice,
 // followed by another move in a lift (which will make all combinations).
@@ -51,29 +58,7 @@ const moveIndicesKnight = knightCoverger(
     [moveIndexLeft, moveIndexRight],
 );
 
-// State helpers
-const getToCell = state => state.board[state.to];
-const getFromCell = state => state.board[state.from];
-const getLastMove = pipe(prop('moves'), last);
-const getLastMoveCell = state => state.board[getLastMove(state)];
-const getMyColor = pipe(getFromCell, getCellColor);
-
-
-// State transformers
-const moveLeft = evolve({ to: moveIndexLeft });
-const moveRight = evolve({ to: moveIndexRight });
-const moveUp = evolve({ to: moveIndexUp });
-const moveDown = evolve({ to: moveIndexDown });
-const moveUpLeft = pipe(moveUp, moveLeft);
-const moveUpRight = pipe(moveUp, moveRight);
-const moveDownLeft = pipe(moveDown, moveLeft);
-const moveDownRight = pipe(moveDown, moveRight);
-
 const knightMoves = moveIndicesKnight.map(move => evolve({ to: move }));
-
-const diagonalMoves = [ moveUpLeft, moveUpRight, moveDownLeft, moveDownRight ];
-const straightMoves = [ moveLeft, moveRight, moveUp, moveDown ];
-const straightAndDiagonalMoves = straightMoves.concat(diagonalMoves);
 
 const pawnMover = ifElse(
     pipe(getFromCell, isWhite),
@@ -85,21 +70,6 @@ const pawnMover = ifElse(
 const pawnLimit = state =>
   ((isWhite(getFromCell(state)) && isSecondRank(state.from)) ||
    (isBlack(getFromCell(state)) && isSeventhRank(state.from))) ? 2 : 1;
-
-// State predicates
-const limitF = curry((limiter, state) => (state.moves.length < limiter(state)));
-const limitN = n => limitF(always(n));
-const limitOne = limitN(1);
-
-const isValidState = pipe(prop('to'), isValidIndex);
-const isEmptyCellCond = pipe(getToCell, isEmptyCell);
-const isOpponentCond = converge(isOpponent, [getToCell, getMyColor]);
-const isFriendlyCond = converge(isFriendly, [getToCell, getMyColor]);
-const didCaptureCond = allPass([
-    getLastMove,
-    converge(isOpponent, [getLastMoveCell, getMyColor]),
-]);
-const basicCond = complement(anyPass([didCaptureCond, isFriendlyCond]));
 
 
 // Helper functions used in buildMoves().
