@@ -11,6 +11,7 @@ import {
   getKnightMoves,
   getKingMoves,
   getBishopMoves,
+  getQueenMoves,
   getMoves,
   test,
 } from '../../src/engine/moves';
@@ -27,8 +28,7 @@ const {
 } = test;
 
 function expectMoves(moves, arr) {
-  expect(moves).toHaveLength(arr.length);
-  arr.forEach(val => expect(moves).toContain(val));
+  expect(moves).toIncludeSameMembers(arr);
 }
 
 describe('moveLeft()', () => {
@@ -194,6 +194,69 @@ describe('getKnightMoves()', () => {
 });
 
 describe('getBishopMoves()', () => {
+  it('should move diagonally', () => {
+    const board = sanBuildBoard('white B d4');
+    expectMoves(
+      getBishopMoves(board, san('d4')),
+      san('c3 c5 b2 b6 a1 a7 e5 e3 f6 f2 g7 g1 h8')
+    );
+  });
+
+  it('should not be able to go through own pieces', () => {
+    const board = sanBuildBoard('white B d4, white P b2');
+    expectMoves(
+      getBishopMoves(board, san('d4')),
+      san('c3 c5 b6 a7 e5 e3 f6 f2 g7 g1 h8')
+    );
+  });
+
+  it('should be able to take enemy pieces (variant 1)', () => {
+    const board = sanBuildBoard('white B d4, black P g7');
+    expectMoves(
+      getBishopMoves(board, san('d4')),
+      san('c3 c5 b2 b6 a1 a7 e5 e3 f6 f2 g1 g7')
+    );
+  });
+
+  it('should be able to take enemy pieces (variant 2)', () => {
+    const board = sanBuildBoard('white B d4, black P c3');
+    expectMoves(
+      getBishopMoves(board, san('d4')),
+      san('c3 c5 b6 a7 e5 e3 f6 f2 g7 g1 h8')
+    );
+  });
+});
+
+describe('getQueenMoves()', () => {
+  it('should move diagonally and straight', () => {
+    const board = sanBuildBoard('white Q d4');
+    const diagonals = 'c3 c5 b2 b6 a1 a7 e5 e3 f6 f2 g7 g1 h8';
+    const straights = 'd1 d2 d3 d5 d6 d7 d8 a4 b4 c4 e4 f4 g4 h4';
+    expectMoves(
+      getQueenMoves(board, san('d4')),
+      san(`${diagonals} ${straights}`)
+    );
+  });
+
+  it('should not be able to go through own pieces', () => {
+    const board = sanBuildBoard('white Q d4, white P d6, white P b2');
+    const diagonals = 'c3 c5 b6 a7 e5 e3 f6 f2 g7 g1 h8';
+    const straights = 'd1 d2 d3 d5 a4 b4 c4 e4 f4 g4 h4';
+    expectMoves(
+      getQueenMoves(board, san('d4')),
+      san(`${diagonals} ${straights}`)
+    );
+  });
+
+  it('should be able to take enemy pieces', () => {
+    const board = sanBuildBoard('white Q d4, black P d6, black P b2');
+    const diagonals = 'b2 c3 c5 b6 a7 e5 e3 f6 f2 g7 g1 h8';
+    const straights = 'd1 d2 d3 d5 d6 a4 b4 c4 e4 f4 g4 h4';
+    expectMoves(
+      getQueenMoves(board, san('d4')),
+      san(`${diagonals} ${straights}`)
+    );
+  });
 });
 
 describe('getMovesFunctionByCell()', () => {

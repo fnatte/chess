@@ -64,10 +64,10 @@ const moveLeft = evolve({ to: moveIndexLeft });
 const moveRight = evolve({ to: moveIndexRight });
 const moveUp = evolve({ to: moveIndexUp });
 const moveDown = evolve({ to: moveIndexDown });
-const moveUpLeft = evolve({ to: moveUpLeft });
-const moveUpRight = evolve({ to: moveUpRight });
-const moveDownLeft = evolve({ to: moveDownLeft });
-const moveDownRight = evolve({ to: moveDownRight });
+const moveUpLeft = pipe(moveUp, moveLeft);
+const moveUpRight = pipe(moveUp, moveRight);
+const moveDownLeft = pipe(moveDown, moveLeft);
+const moveDownRight = pipe(moveDown, moveRight);
 
 const knightMoves = moveIndicesKnight.map(move => evolve({ to: move }));
 
