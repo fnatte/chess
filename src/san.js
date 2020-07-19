@@ -60,19 +60,17 @@ function build(obj, propName, parseFunc, str) {
 }
 /* eslint-enable no-param-reassign */
 
-/* eslint-disable no-shadow */
 export function san(input) {
-  const obj = input.split(" ").reduce((obj, str) => {
-    build(obj, "color", parseColor, str);
-    build(obj, "index", getIndexFromSAN, str);
-    build(obj, "type", parsePieceType, str);
-    return obj;
+  const obj = input.split(" ").reduce((acc, str) => {
+    build(acc, "color", parseColor, str);
+    build(acc, "index", getIndexFromSAN, str);
+    build(acc, "type", parsePieceType, str);
+    return acc;
   }, {});
 
   const vals = Object.values(obj);
   return vals.length === 1 ? vals[0] : obj;
 }
-/* eslint-enable no-shadow */
 
 export function sanBuildBoard(input) {
   return input
