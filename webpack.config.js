@@ -1,36 +1,36 @@
-const path = require('path');
+const path = require("path");
 
 const config = {
-  mode: 'development',
-  entry: './src/main.js',
+  mode: "development",
+  entry: "./src/main.js",
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js'
+    path: path.resolve(__dirname, "dist"),
+    filename: "bundle.js",
   },
   module: {
     rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: 'babel-loader'
+        use: "babel-loader",
       },
       {
         test: /\.css$/,
         use: [
-          'style-loader',
+          "style-loader",
           {
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               modules: true,
-              importLoaders: 1
-            }
+              importLoaders: 1,
+            },
           },
-          'postcss-loader'
-        ]
-      }
-    ]
+          "postcss-loader",
+        ],
+      },
+    ],
   },
-  devtool: 'eval-source-map'
+  devtool: "eval-source-map",
 };
 
 module.exports = config;

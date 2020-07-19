@@ -1,10 +1,10 @@
-import { PieceType, PieceColor } from './engine/constants';
-import { getIndexFromSAN, getPieceType } from './engine/utils';
-import { emptyBoard, placePiece } from './engine/board';
+import { PieceType, PieceColor } from "./engine/constants";
+import { getIndexFromSAN, getPieceType } from "./engine/utils";
+import { emptyBoard, placePiece } from "./engine/board";
 
-const Piece = '([KQRBNP])';
-const Pos = '([a-h][1-8])';
-const Dis = '([a-h]|[1-8]|[a-h][1-8])';
+const Piece = "([KQRBNP])";
+const Pos = "([a-h][1-8])";
+const Dis = "([a-h]|[1-8]|[a-h][1-8])";
 
 const PieceRegExp = new RegExp(`^${Piece}$`);
 const MoveRegExp = new RegExp(`^${Piece}?${Dis}?(x)?${Pos}$`);
@@ -17,7 +17,7 @@ export function parseMove(input) {
   }
 
   return {
-    piece: res[1] || '',
+    piece: res[1] || "",
     dis: res[2],
     capture: res[3],
     dest: res[4],
@@ -25,11 +25,11 @@ export function parseMove(input) {
 }
 
 function parseColor(input) {
-  if (input === 'white') {
+  if (input === "white") {
     return PieceColor.white;
   }
 
-  if (input === 'black') {
+  if (input === "black") {
     return PieceColor.black;
   }
 
@@ -38,13 +38,13 @@ function parseColor(input) {
 
 function parsePieceType(input) {
   const res = input.match(PieceRegExp);
-  return (res !== null ? getPieceType(res[1]) : null);
+  return res !== null ? getPieceType(res[1]) : null;
 }
 
 function build(obj, propName, parseFunc, str) {
   const val = parseFunc(str);
   if (val !== null && val !== -1) {
-    if (typeof obj[propName] === 'undefined') {
+    if (typeof obj[propName] === "undefined") {
       obj[propName] = val;
       return;
     }
@@ -54,17 +54,17 @@ function build(obj, propName, parseFunc, str) {
       return;
     }
 
-    obj[propName] = [ obj[propName], val ];
+    obj[propName] = [obj[propName], val];
   }
 
   return obj;
 }
 
 export function san(input) {
-  const obj = input.split(' ').reduce((obj, str) => {
-    build(obj, 'color', parseColor, str);
-    build(obj, 'index', getIndexFromSAN, str);
-    build(obj, 'type', parsePieceType, str);
+  const obj = input.split(" ").reduce((obj, str) => {
+    build(obj, "color", parseColor, str);
+    build(obj, "index", getIndexFromSAN, str);
+    build(obj, "type", parsePieceType, str);
     return obj;
   }, {});
 
@@ -73,8 +73,8 @@ export function san(input) {
 }
 
 export function sanBuildBoard(input) {
-  return input.split(',')
+  return input
+    .split(",")
     .map(san)
     .reduce((board, o) => placePiece(board, o), emptyBoard());
 }
-

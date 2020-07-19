@@ -1,7 +1,7 @@
-import { PieceType, PieceColor, PieceNames } from './constants';
+import { PieceType, PieceColor, PieceNames } from "./constants";
 //import { getMoveFunction } from './moves';
-import { getMoves } from './moves';
-import { findBoardIndices } from './board';
+import { getMoves } from "./moves";
+import { findBoardIndices } from "./board";
 import {
   getCellColor,
   getColorName,
@@ -9,7 +9,7 @@ import {
   getXYFromIndex,
   getIndexFromSAN,
   getPieceType,
-} from './utils';
+} from "./utils";
 
 export { getMoves };
 
@@ -28,7 +28,6 @@ export function getMoves(board, index) {
 }
 */
 
-
 function distinguishIndex(index, dis) {
   if (dis === undefined) {
     return true;
@@ -37,8 +36,7 @@ function distinguishIndex(index, dis) {
   const p1 = getXYFromIndex(index);
   const p2 = getXYFromSAN(dis);
 
-  return (p2.x === -1 || p2.x === p1.x) &&
-    (p2.y === -1 || p2.y === p1.y);
+  return (p2.x === -1 || p2.x === p1.x) && (p2.y === -1 || p2.y === p1.y);
 }
 
 export function validateMove(game, move) {
@@ -46,25 +44,26 @@ export function validateMove(game, move) {
 
   // Find matching pieces
   const piece = getPieceType(move.piece) | game.turn;
-  const indices = findBoardIndices(game.board, cell => cell === piece)
-    .filter(index => distinguishIndex(index, move.dis));
+  const indices = findBoardIndices(
+    game.board,
+    (cell) => cell === piece
+  ).filter((index) => distinguishIndex(index, move.dis));
 
   // Determine which indices that can move to the destination
-  const matchingIndices = indices.map(index =>
-      getMoves(game.board, index)
-        .includes(destIndex)
+  const matchingIndices = indices.map((index) =>
+    getMoves(game.board, index).includes(destIndex)
   );
 
-  const matchingCount = matchingIndices.reduce((a,b) => {
+  const matchingCount = matchingIndices.reduce((a, b) => {
     return b ? a + 1 : a;
   }, 0);
 
   if (matchingCount === 0) {
-    return { error: 'Move not available' };
+    return { error: "Move not available" };
   }
 
   if (matchingCount > 1) {
-    return { error: 'Ambiguous move' };
+    return { error: "Ambiguous move" };
   }
 
   return {
@@ -76,11 +75,9 @@ export function validateMove(game, move) {
 export function nextTurn(game) {
   return {
     ...game,
-    turn: game.turn === PieceColor.white ?
-      PieceColor.black :
-      PieceColor.white
+    turn: game.turn === PieceColor.white ? PieceColor.black : PieceColor.white,
   };
-};
+}
 
 export function makeMove(game, fromIndex, toIndex) {
   // Make move on board
@@ -89,9 +86,8 @@ export function makeMove(game, fromIndex, toIndex) {
   board[fromIndex] = 0;
 
   // Change turn
-  const turn = game.turn === PieceColor.white ?
-    PieceColor.black :
-    PieceColor.white;
+  const turn =
+    game.turn === PieceColor.white ? PieceColor.black : PieceColor.white;
 
   return { ...game, board, turn };
 }

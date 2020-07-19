@@ -1,8 +1,8 @@
-import xs from 'xstream';
+import xs from "xstream";
 
 export function preventDefaultSinkDriver(prevented$) {
   prevented$.addListener({
-    next: ev => {
+    next: (ev) => {
       ev.preventDefault();
     },
     error: () => {},

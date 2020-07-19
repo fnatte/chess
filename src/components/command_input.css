@@ -1,6 +1,6 @@
 :root {
   --colorCorrect: #88ff52;
-  --colorError: #FF0000;
+  --colorError: #ff0000;
 }
 
 .container {
@@ -27,5 +27,5 @@
 
 .feedback {
   margin-top: 10px;
-  color: #DD0000;
+  color: #dd0000;
 }

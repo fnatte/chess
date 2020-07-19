@@ -1,9 +1,38 @@
-import { apply, curry, compose, flatten, map,
-         allPass, pipe, ifElse, prop, complement,
-         propSatisfies, assoc, evolve, inc, dec,
-         always, add, subtract, last, converge, __,
-         anyPass, identity, lift, concat, flip, is,
-         until, append, when, juxt, equals, call } from 'ramda';
+import {
+  apply,
+  curry,
+  compose,
+  flatten,
+  map,
+  allPass,
+  pipe,
+  ifElse,
+  prop,
+  complement,
+  propSatisfies,
+  assoc,
+  evolve,
+  inc,
+  dec,
+  always,
+  add,
+  subtract,
+  last,
+  converge,
+  __,
+  anyPass,
+  identity,
+  lift,
+  concat,
+  flip,
+  is,
+  until,
+  append,
+  when,
+  juxt,
+  equals,
+  call,
+} from "ramda";
 
 import {
   getCellColor,
@@ -21,7 +50,7 @@ import {
   getIndexFromXY,
   isValidXY,
   isValidIndex,
-} from '../utils';
+} from "../utils";
 
 // Helper functions
 export const invalidate = always(-1);
@@ -33,8 +62,16 @@ export const isNotALane = complement(isALane);
 export const isNotHLane = complement(isHLane);
 
 // Index movers in form f(index) => index
-export const moveIndexLeft = ifElse(allPass([isValidIndex, isNotALane]), dec, invalidate);
-export const moveIndexRight = ifElse(allPass([isValidIndex, isNotHLane]), inc, invalidate);
+export const moveIndexLeft = ifElse(
+  allPass([isValidIndex, isNotALane]),
+  dec,
+  invalidate
+);
+export const moveIndexRight = ifElse(
+  allPass([isValidIndex, isNotHLane]),
+  inc,
+  invalidate
+);
 export const moveIndexUp = ifElse(isValidIndex, add(8), invalidate);
 export const moveIndexDown = ifElse(isValidIndex, subtract(__, 8), invalidate);
 export const moveIndexUpLeft = pipe(moveIndexLeft, moveIndexUp);
@@ -43,10 +80,10 @@ export const moveIndexDownLeft = pipe(moveIndexLeft, moveIndexDown);
 export const moveIndexDownRight = pipe(moveIndexRight, moveIndexDown);
 
 // State getters
-export const getToCell = state => state.board[state.to];
-export const getFromCell = state => state.board[state.from];
-export const getLastMove = pipe(prop('moves'), last);
-export const getLastMoveCell = state => state.board[getLastMove(state)];
+export const getToCell = (state) => state.board[state.to];
+export const getFromCell = (state) => state.board[state.from];
+export const getLastMove = pipe(prop("moves"), last);
+export const getLastMoveCell = (state) => state.board[getLastMove(state)];
 export const getMyColor = pipe(getFromCell, getCellColor);
 
 // Move state transformers
@@ -60,23 +97,29 @@ export const moveDownLeft = pipe(moveDown, moveLeft);
 export const moveDownRight = pipe(moveDown, moveRight);
 
 // Move colletions
-export const diagonalMoves = [ moveUpLeft, moveUpRight, moveDownLeft, moveDownRight ];
-export const straightMoves = [ moveLeft, moveRight, moveUp, moveDown ];
+export const diagonalMoves = [
+  moveUpLeft,
+  moveUpRight,
+  moveDownLeft,
+  moveDownRight,
+];
+export const straightMoves = [moveLeft, moveRight, moveUp, moveDown];
 export const straightAndDiagonalMoves = straightMoves.concat(diagonalMoves);
 
 // State predicates
-export const limitF = curry((limiter, state) => (state.moves.length < limiter(state)));
-export const limitN = n => limitF(always(n));
+export const limitF = curry(
+  (limiter, state) => state.moves.length < limiter(state)
+);
+export const limitN = (n) => limitF(always(n));
 export const limitOne = limitN(1);
 
 // State helpers
-export const isValidState = pipe(prop('to'), isValidIndex);
+export const isValidState = pipe(prop("to"), isValidIndex);
 export const isEmptyCellCond = pipe(getToCell, isEmptyCell);
 export const isOpponentCond = converge(isOpponent, [getToCell, getMyColor]);
 export const isFriendlyCond = converge(isFriendly, [getToCell, getMyColor]);
 export const didCaptureCond = allPass([
-    getLastMove,
-    converge(isOpponent, [getLastMoveCell, getMyColor]),
+  getLastMove,
+  converge(isOpponent, [getLastMoveCell, getMyColor]),
 ]);
 export const basicCond = complement(anyPass([didCaptureCond, isFriendlyCond]));
-

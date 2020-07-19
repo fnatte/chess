@@ -1,4 +1,4 @@
-import { PieceType, PieceColor } from './constants';
+import { PieceType, PieceColor } from "./constants";
 
 export function emptyBoard() {
   return Array(64).fill(PieceType.empty);
@@ -48,7 +48,7 @@ export function createBoard() {
   board[63] = PieceType.rook | PieceColor.black;
 
   return board;
-};
+}
 
 export function placePiece(board, desc) {
   const newBoard = board.slice();
@@ -56,4 +56,3 @@ export function placePiece(board, desc) {
 
   return newBoard;
 }
-
