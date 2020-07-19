@@ -1,8 +1,7 @@
 import { map } from "ramda";
-
 import { createBoard, emptyBoard, placePiece } from "../board";
 import { getIndexFromSAN } from "../utils";
-import { san, sanBuildBoard } from "../../san";
+import { san, sanBuildBoard } from "../san";
 import {
   getPawnMoves,
   getRookMoves,

@@ -1,6 +1,6 @@
-import { PieceColor } from "./engine/constants";
-import { getIndexFromSAN, getPieceType } from "./engine/utils";
-import { emptyBoard, placePiece } from "./engine/board";
+import { PieceColor } from "./constants";
+import { getIndexFromSAN, getPieceType } from "./utils";
+import { emptyBoard, placePiece } from "./board";
 
 const Piece = "([KQRBNP])";
 const Pos = "([a-h][1-8])";

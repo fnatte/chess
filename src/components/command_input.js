@@ -5,7 +5,7 @@ import sampleCombine from "xstream/extra/sampleCombine";
 import { html } from "snabbdom-jsx";
 import { div, input } from "@cycle/dom";
 import styles from "./command_input.css";
-import { parseMove } from "../san";
+import { parseMove } from "../engine/san";
 import { validateMove } from "../engine/chess";
 import { moveCommand } from "../engine/command";
 

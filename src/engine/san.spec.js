@@ -1,6 +1,6 @@
 import { san, sanBuildBoard } from "./san";
-import { PieceColor, PieceType } from "./engine/constants";
-import { getCellValue } from "./engine/board";
+import { PieceColor, PieceType } from "./constants";
+import { getCellValue } from "./board";
 
 describe("san()", () => {
   it("should parse index, color and piece", () => {
