@@ -1,6 +1,5 @@
-/* eslint-disable no-bitwise */
-
 import { PieceType, PieceColor } from "./constants";
+import { getCellValue } from "./utils";
 
 export function emptyBoard() {
   return Array(64).fill(PieceType.empty);
@@ -16,38 +15,34 @@ export function findBoardIndices(board, fn) {
   }, []);
 }
 
-export function getCellValue(pieceType, pieceColor) {
-  return pieceType | pieceColor;
-}
-
 export function createBoard() {
   const board = emptyBoard();
 
   // Place pawns
   for (let i = 0; i < 8; i++) {
-    board[8 + i] = PieceType.pawn | PieceColor.white;
-    board[48 + i] = PieceType.pawn | PieceColor.black;
+    board[8 + i] = getCellValue(PieceType.pawn, PieceColor.white);
+    board[48 + i] = getCellValue(PieceType.pawn, PieceColor.black);
   }
 
   // Place other white pieces
-  board[0] = PieceType.rook | PieceColor.white;
-  board[1] = PieceType.knight | PieceColor.white;
-  board[2] = PieceType.bishop | PieceColor.white;
-  board[3] = PieceType.queen | PieceColor.white;
-  board[4] = PieceType.king | PieceColor.white;
-  board[5] = PieceType.bishop | PieceColor.white;
-  board[6] = PieceType.knight | PieceColor.white;
-  board[7] = PieceType.rook | PieceColor.white;
+  board[0] = getCellValue(PieceType.rook, PieceColor.white);
+  board[1] = getCellValue(PieceType.knight, PieceColor.white);
+  board[2] = getCellValue(PieceType.bishop, PieceColor.white);
+  board[3] = getCellValue(PieceType.queen, PieceColor.white);
+  board[4] = getCellValue(PieceType.king, PieceColor.white);
+  board[5] = getCellValue(PieceType.bishop, PieceColor.white);
+  board[6] = getCellValue(PieceType.knight, PieceColor.white);
+  board[7] = getCellValue(PieceType.rook, PieceColor.white);
 
   // Place other black pieces
-  board[56] = PieceType.rook | PieceColor.black;
-  board[57] = PieceType.knight | PieceColor.black;
-  board[58] = PieceType.bishop | PieceColor.black;
-  board[59] = PieceType.queen | PieceColor.black;
-  board[60] = PieceType.king | PieceColor.black;
-  board[61] = PieceType.bishop | PieceColor.black;
-  board[62] = PieceType.knight | PieceColor.black;
-  board[63] = PieceType.rook | PieceColor.black;
+  board[56] = getCellValue(PieceType.rook, PieceColor.black);
+  board[57] = getCellValue(PieceType.knight, PieceColor.black);
+  board[58] = getCellValue(PieceType.bishop, PieceColor.black);
+  board[59] = getCellValue(PieceType.queen, PieceColor.black);
+  board[60] = getCellValue(PieceType.king, PieceColor.black);
+  board[61] = getCellValue(PieceType.bishop, PieceColor.black);
+  board[62] = getCellValue(PieceType.knight, PieceColor.black);
+  board[63] = getCellValue(PieceType.rook, PieceColor.black);
 
   return board;
 }

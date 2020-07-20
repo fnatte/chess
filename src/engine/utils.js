@@ -14,6 +14,10 @@ export function getCellPiece(cell) {
   return cell & 0x0f;
 }
 
+export function getCellValue(pieceType, pieceColor) {
+  return pieceType | pieceColor;
+}
+
 /* eslint-enable no-bitwise */
 
 export function getColorName(color) {
@@ -95,7 +99,7 @@ export function getIndexFromSAN(pos) {
 }
 
 /**
- * Other utils
+ * Convert utils
  */
 
 export function getPieceTypeFromSAN(sanType) {

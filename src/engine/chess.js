@@ -2,6 +2,7 @@ import { PieceColor, PieceType } from "./constants";
 import { getMoves } from "./moves";
 import { findBoardIndices } from "./board";
 import {
+  getCellValue,
   getXYFromSAN,
   getXYFromIndex,
   getIndexFromSAN,
@@ -20,12 +21,13 @@ function distinguishIndex(index, dis) {
 }
 
 export function validateMove(game, move) {
-  /* eslint-disable no-bitwise */
-
   const destIndex = getIndexFromSAN(move.dest);
 
   // Find matching pieces
-  const piece = (getPieceTypeFromSAN(move.piece) || PieceType.pawn) | game.turn;
+  const piece = getCellValue(
+    getPieceTypeFromSAN(move.piece) || PieceType.pawn,
+    game.turn
+  );
 
   const indices = findBoardIndices(
     game.board,
@@ -53,8 +55,6 @@ export function validateMove(game, move) {
     fromIndex: indices[matchingIndices.indexOf(true)],
     toIndex: destIndex,
   };
-
-  /* eslint-enable no-bitwise */
 }
 
 export function nextTurn(game) {
