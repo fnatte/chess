@@ -1,11 +1,11 @@
-import { PieceColor } from "./constants";
+import { PieceColor, PieceType } from "./constants";
 import { getMoves } from "./moves";
 import { findBoardIndices } from "./board";
 import {
   getXYFromSAN,
   getXYFromIndex,
   getIndexFromSAN,
-  getPieceType,
+  getPieceTypeFromSAN,
 } from "./utils";
 
 function distinguishIndex(index, dis) {
@@ -25,7 +25,8 @@ export function validateMove(game, move) {
   const destIndex = getIndexFromSAN(move.dest);
 
   // Find matching pieces
-  const piece = getPieceType(move.piece) | game.turn;
+  const piece = (getPieceTypeFromSAN(move.piece) || PieceType.pawn) | game.turn;
+
   const indices = findBoardIndices(
     game.board,
     (cell) => cell === piece

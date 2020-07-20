@@ -18,6 +18,7 @@ describe("san()", () => {
   it("should parse multiple indices", () => {
     expect(san("e2 e3")).toEqual([12, 20]);
   });
+
   it("should parse color and piece", () => {
     expect(san("white P")).toEqual({
       color: PieceColor.white,

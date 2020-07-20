@@ -98,7 +98,7 @@ export function getIndexFromSAN(pos) {
  * Other utils
  */
 
-export function getPieceType(sanType) {
+export function getPieceTypeFromSAN(sanType) {
   return {
     K: 0x01,
     Q: 0x02,
@@ -106,6 +106,12 @@ export function getPieceType(sanType) {
     B: 0x04,
     N: 0x05,
     P: 0x06,
-    "": 0x06,
   }[sanType];
+}
+
+export function getColorFromSAN(sanColor) {
+  return {
+    white: PieceColor.white,
+    black: PieceColor.black,
+  }[sanColor];
 }

@@ -1,12 +1,10 @@
-import { PieceColor } from "./constants";
-import { getIndexFromSAN, getPieceType } from "./utils";
+import { getColorFromSAN, getIndexFromSAN, getPieceTypeFromSAN } from "./utils";
 import { emptyBoard, placePiece } from "./board";
 
 const Piece = "([KQRBNP])";
 const Pos = "([a-h][1-8])";
 const Dis = "([a-h]|[1-8]|[a-h][1-8])";
 
-const PieceRegExp = new RegExp(`^${Piece}$`);
 const MoveRegExp = new RegExp(`^${Piece}?${Dis}?(x)?${Pos}$`);
 
 export function parseMove(input) {
@@ -24,27 +22,10 @@ export function parseMove(input) {
   };
 }
 
-function parseColor(input) {
-  if (input === "white") {
-    return PieceColor.white;
-  }
-
-  if (input === "black") {
-    return PieceColor.black;
-  }
-
-  return null;
-}
-
-function parsePieceType(input) {
-  const res = input.match(PieceRegExp);
-  return res !== null ? getPieceType(res[1]) : null;
-}
-
 /* eslint-disable no-param-reassign */
 function build(obj, propName, parseFunc, str) {
   const val = parseFunc(str);
-  if (val !== null && val !== -1) {
+  if (val !== null && val !== undefined && val !== -1) {
     if (typeof obj[propName] === "undefined") {
       obj[propName] = val;
       return;
@@ -62,9 +43,9 @@ function build(obj, propName, parseFunc, str) {
 
 export function san(input) {
   const obj = input.split(" ").reduce((acc, str) => {
-    build(acc, "color", parseColor, str);
+    build(acc, "color", getColorFromSAN, str);
     build(acc, "index", getIndexFromSAN, str);
-    build(acc, "type", parsePieceType, str);
+    build(acc, "type", getPieceTypeFromSAN, str);
     return acc;
   }, {});
 
