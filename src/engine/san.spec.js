@@ -1,4 +1,4 @@
-import { san, sanBuildBoard } from "./san";
+import { san, sanBuildBoard, parseMove } from "./san";
 import { PieceColor, PieceType } from "./constants";
 import { getCellValue } from "./utils";
 
@@ -44,5 +44,56 @@ describe("sanBuildBoard()", () => {
     expect(board[san("d2")]).toEqual(
       getCellValue(PieceColor.black, PieceType.king)
     );
+  });
+});
+
+describe("parseMove()", () => {
+  it("should parse Ra8", () => {
+    expect(parseMove("Ra8")).toMatchObject({
+      piece: "R",
+      dest: "a8",
+    });
+  });
+  it("should parse f4", () => {
+    expect(parseMove("f4")).toMatchObject({
+      piece: "",
+      dest: "f4",
+    });
+  });
+  it("should parse Qxb2", () => {
+    expect(parseMove("Qxb2")).toMatchObject({
+      piece: "Q",
+      capture: "x",
+      dest: "b2",
+    });
+  });
+  it("should parse Rab2", () => {
+    expect(parseMove("Rab2")).toMatchObject({
+      piece: "R",
+      dis: "a",
+      dest: "b2",
+    });
+  });
+  it("should parse R1a3", () => {
+    expect(parseMove("R1a3")).toMatchObject({
+      piece: "R",
+      dis: "1",
+      dest: "a3",
+    });
+  });
+  it("should parse Qh4e1", () => {
+    expect(parseMove("Qh4e1")).toMatchObject({
+      piece: "Q",
+      dis: "h4",
+      dest: "e1",
+    });
+  });
+  it("should parse Qh4xe1", () => {
+    expect(parseMove("Qh4xe1")).toMatchObject({
+      piece: "Q",
+      dis: "h4",
+      capture: "x",
+      dest: "e1",
+    });
   });
 });
