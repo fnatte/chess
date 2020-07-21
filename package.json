@@ -2,14 +2,14 @@
   "name": "chess",
   "version": "0.0.1",
   "description": "Best chess",
-  "main": "index.js",
+  "main": "dist/bundle.js",
   "scripts": {
     "start": "webpack-dev-server",
-    "lint": "eslint --fix 'src/**/*.js'",
+    "lint": "eslint --fix 'src/**/*.js",
     "test": "jest"
   },
   "author": "Matteus Hemström",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
