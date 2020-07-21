@@ -4,6 +4,7 @@
   "description": "Best chess",
   "main": "dist/bundle.js",
   "scripts": {
+    "build": "webpack",
     "start": "webpack-dev-server",
     "lint": "eslint --fix 'src/**/*.js",
     "test": "jest"
