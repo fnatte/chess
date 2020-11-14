@@ -43,6 +43,7 @@
     "@cycle/xstream-run": "^4.2.0",
     "ramda": "^0.27.1",
     "snabbdom-jsx": "^0.4.2",
+    "webpack-dev-server": "^3.11.0",
     "xstream": "^11.14.0"
   },
   "husky": {
