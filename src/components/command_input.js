@@ -145,6 +145,7 @@ function view(state$) {
           class={{ [styles.input]: true }}
           value={state.inputValue}
           disabled={!ourTurn}
+          autofocus
         />
         <div class={{ [styles.feedback]: true }}>{state.feedback.text}</div>
       </div>
