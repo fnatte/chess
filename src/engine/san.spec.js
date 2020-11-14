@@ -60,6 +60,13 @@ describe("parseMove()", () => {
       dest: "f4",
     });
   });
+  it("should parse exd5", () => {
+    expect(parseMove("exd5")).toMatchObject({
+      piece: "",
+      capture: "x",
+      dest: "d5",
+    });
+  });
   it("should parse Qxb2", () => {
     expect(parseMove("Qxb2")).toMatchObject({
       piece: "Q",
