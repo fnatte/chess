@@ -1,4 +1,12 @@
+@import-sanitize;
+
 .container {
   display: flex;
   justify-content: space-between;
+  padding: 20px;
+}
+
+.controls {
+  width: 100%;
+  padding: 0 20px;
 }

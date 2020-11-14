@@ -5,13 +5,11 @@
 
 .container {
   width: 100%;
-  padding: 10px;
 }
 
 .input {
   width: 100%;
   padding: 4px;
-  box-sizing: border-box;
   transition: all 0.4s ease-in;
 
   @nest .error & {

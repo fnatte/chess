@@ -18,6 +18,10 @@ module.exports = {
     "jsx/factory-in-scope": [1, { pragma: "html" }],
     "jsx/mark-used-vars": 1,
     "jsx/no-undef": 1,
+    "import/no-extraneous-dependencies": [
+      "error",
+      { devDependencies: ["postcss.config.js", "**/*.spec.js"] },
+    ],
   },
   overrides: [
     {

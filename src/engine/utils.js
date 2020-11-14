@@ -98,6 +98,14 @@ export function getIndexFromSAN(pos) {
   return getIndexFromXY(getXYFromSAN(pos));
 }
 
+export function getSANFromXY({ x, y }) {
+  return (x + 10).toString(18) + (y + 1).toString(10);
+}
+
+export function getSANFromIndex(index) {
+  return getSANFromXY(getXYFromIndex(index));
+}
+
 /**
  * Convert utils
  */

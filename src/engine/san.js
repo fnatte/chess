@@ -22,6 +22,12 @@ export function parseMove(input) {
   };
 }
 
+export function moveToSAN(move) {
+  return `${move?.piece || ""}${move?.dis || ""}${move?.capture || ""}${
+    move.dest
+  }`;
+}
+
 /* eslint-disable no-param-reassign */
 function build(obj, propName, parseFunc, str) {
   const val = parseFunc(str);

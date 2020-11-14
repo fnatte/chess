@@ -5,5 +5,6 @@ export default function newGame() {
   return {
     board: createBoard(),
     turn: PieceColor.white,
+    moves: [],
   };
 }

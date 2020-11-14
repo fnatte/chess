@@ -1,5 +1,7 @@
+import { html } from "snabbdom-jsx";
 import xs from "xstream";
 import { run } from "@cycle/xstream-run";
+import delay from "xstream/extra/delay";
 import { div, makeDOMDriver } from "@cycle/dom";
 import isolate from "@cycle/isolate";
 import newGame from "./engine/new-game";
@@ -7,6 +9,7 @@ import { PieceColor } from "./engine/constants";
 import AI from "./engine/ai";
 import Board from "./components/board";
 import CommandInput from "./components/command_input";
+import GameLog from "./components/game_log";
 import styles from "./main.css";
 import preventDefaultSinkDriver from "./prevent_default_sink_driver";
 
@@ -33,8 +36,8 @@ function main({ DOM }) {
     .filter((game) => game.turn === aiColor)
     .map((game) => AI(game, aiColor));
 
-  // Commands
-  const command$ = xs.merge(cmdInput.command, ai$);
+  // Commands (https://github.com/staltz/xstream/issues/239)
+  const command$ = xs.merge(cmdInput.command, ai$).compose(delay(1));
   commandProxy$.imitate(command$);
 
   const board = isolate(Board)({
@@ -42,11 +45,22 @@ function main({ DOM }) {
     props: { board$: game$.map((game) => game.board) },
   });
 
+  const gameLog = isolate(GameLog)({
+    DOM,
+    props: { game$ },
+  });
+
   const vdom$ = xs
-    .combine(board.DOM, cmdInput.DOM)
-    .map(([boardVDom$, cmdInput$]) =>
-      div(`.${styles.container}`, [boardVDom$, cmdInput$])
-    );
+    .combine(board.DOM, cmdInput.DOM, gameLog.DOM)
+    .map(([boardVtree, cmdInputVtree, gameLogVtree]) => (
+      <div class={{ [styles.container]: true }}>
+        {boardVtree}
+        <div class={{ [styles.controls]: true }}>
+          {gameLogVtree}
+          {cmdInputVtree}
+        </div>
+      </div>
+    ));
 
   const prevented$ = cmdInput.prevented;
 

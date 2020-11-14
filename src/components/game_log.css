@@ -1,0 +1,11 @@
+:root {
+}
+
+.container {
+  width: 100%;
+  display: flex;
+}
+
+.event {
+  padding: 10px;
+}

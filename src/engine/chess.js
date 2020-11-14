@@ -64,7 +64,9 @@ export function nextTurn(game) {
   };
 }
 
-export function makeMove(game, fromIndex, toIndex) {
+export function makeMove(game, move) {
+  const { fromIndex, toIndex } = validateMove(game, move);
+
   // Make move on board
   const board = game.board.slice();
   board[toIndex] = board[fromIndex];
@@ -74,5 +76,10 @@ export function makeMove(game, fromIndex, toIndex) {
   const turn =
     game.turn === PieceColor.white ? PieceColor.black : PieceColor.white;
 
-  return { ...game, board, turn };
+  return {
+    ...game,
+    board,
+    turn,
+    moves: [...game.moves, move],
+  };
 }

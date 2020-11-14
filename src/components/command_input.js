@@ -121,9 +121,12 @@ function model(action$, initialState) {
   const command$ = action$
     .filter((a) => a.type === "SEND_MOVE_COMMAND")
     .compose(sampleCombine(state$))
-    .map(([action, state]) => validateMove(state.game, action.payload))
-    .filter((res) => !res.error)
-    .map((res) => moveCommand(res.fromIndex, res.toIndex));
+    .map(([action, state]) => ({
+      move: action.payload,
+      validation: validateMove(state.game, action.payload),
+    }))
+    .filter((res) => !res.validation.error)
+    .map((res) => moveCommand(res.move));
 
   return { state$, command$ };
 }

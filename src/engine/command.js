@@ -1,7 +1,6 @@
 import { makeMove, nextTurn } from "./chess";
 
-export const moveCommand = (fromIndex, toIndex) => (game) =>
-  makeMove(game, fromIndex, toIndex);
+export const moveCommand = (move) => (game) => makeMove(game, move);
 
 /**
  * Invalid chess command really. Only used for debugging.
