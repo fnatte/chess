@@ -1,13 +1,19 @@
 import { getMoves } from "./moves";
 import { findBoardIndices } from "./board";
-import { isCellColor, getSANFromIndex } from "./utils";
+import {
+  isCellColor,
+  getSANFromIndex,
+  getCellPiece,
+  getSANPieceType,
+  isEmptyCell,
+} from "./utils";
 import { moveCommand, passCommand } from "./command";
 
-function indicesToMove(fromIndex, toIndex) {
+function indicesToMove(board, fromIndex, toIndex) {
   return {
-    piece: "",
+    piece: getSANPieceType(getCellPiece(board[fromIndex])),
     dis: getSANFromIndex(fromIndex),
-    capture: undefined,
+    capture: isEmptyCell(board[toIndex]) ? "" : "x",
     dest: getSANFromIndex(toIndex),
   };
 }
@@ -21,7 +27,7 @@ export default function AI(game, color) {
     (acc, fromIndex) =>
       acc.concat(
         getMoves(game.board, fromIndex).map((toIndex) =>
-          indicesToMove(fromIndex, toIndex)
+          indicesToMove(game.board, fromIndex, toIndex)
         )
       ),
     []

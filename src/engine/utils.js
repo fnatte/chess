@@ -121,6 +121,17 @@ export function getPieceTypeFromSAN(sanType) {
   }[sanType];
 }
 
+export function getSANPieceType(pieceType) {
+  return {
+    0x01: "K",
+    0x02: "Q",
+    0x03: "R",
+    0x04: "B",
+    0x05: "N",
+    0x06: "P",
+  }[pieceType];
+}
+
 export function getColorFromSAN(sanColor) {
   return {
     white: PieceColor.white,
