@@ -13,7 +13,7 @@ export default function AI(game, color) {
     (acc, fromIndex) =>
       acc.concat(
         getMoves(game.board, fromIndex).map((toIndex) =>
-          createSanMove(game.board, { fromIndex, toIndex })
+          createSanMove(game, { fromIndex, toIndex })
         )
       ),
     []

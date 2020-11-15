@@ -24,19 +24,19 @@ function distinguishIndex(index, dis) {
   return (p2.x === -1 || p2.x === p1.x) && (p2.y === -1 || p2.y === p1.y);
 }
 
-export function validateMove(game, move) {
-  const destIndex = getIndexFromSAN(move.dest);
+export function validateMove(game, sanMove) {
+  const destIndex = getIndexFromSAN(sanMove.dest);
 
   // Find matching pieces
   const piece = getCellValue(
-    getPieceTypeFromSAN(move.piece) || PieceType.pawn,
+    getPieceTypeFromSAN(sanMove.piece) || PieceType.pawn,
     game.turn
   );
 
   const indices = findBoardIndices(
     game.board,
     (cell) => cell === piece
-  ).filter((index) => distinguishIndex(index, move.dis));
+  ).filter((index) => distinguishIndex(index, sanMove.dis));
 
   // Determine which indices that can move to the destination
   const matchingIndices = indices.map((index) =>
@@ -48,11 +48,11 @@ export function validateMove(game, move) {
   }, 0);
 
   if (matchingCount === 0) {
-    return { error: "Move not available" };
+    return { error: "Move not available", matchingCount };
   }
 
   if (matchingCount > 1) {
-    return { error: "Ambiguous move" };
+    return { error: "Ambiguous move", matchingCount };
   }
 
   return {
@@ -65,6 +65,20 @@ export function nextTurn(game) {
   return {
     ...game,
     turn: game.turn === PieceColor.white ? PieceColor.black : PieceColor.white,
+  };
+}
+
+function simplifySanMove(game, sanMove) {
+  const validationResult = validateMove(game, { ...sanMove, dis: undefined });
+
+  return {
+    piece: sanMove.piece !== "P" ? sanMove.piece : "",
+    capture: sanMove.capture,
+    dest: sanMove.dest,
+    dis:
+      validationResult.error && validationResult.matchingCount > 0
+        ? sanMove.dis
+        : undefined,
   };
 }
 
@@ -89,16 +103,18 @@ export function makeMove(game, sanMove) {
     ...game,
     board,
     turn,
-    moves: [...game.moves, sanMove],
+    moves: [...game.moves, simplifySanMove(game, sanMove)],
   };
 }
 
-export function createSanMove(board, indexMove) {
+export function createSanMove(game, indexMove) {
   const { fromIndex, toIndex } = indexMove;
-  return {
-    piece: getSANPieceType(getCellPiece(board[fromIndex])),
+  const sanMove = {
+    piece: getSANPieceType(getCellPiece(game.board[fromIndex])),
     dis: getSANFromIndex(fromIndex),
-    capture: isEmptyCell(board[toIndex]) ? "" : "x",
+    capture: isEmptyCell(game.board[toIndex]) ? "" : "x",
     dest: getSANFromIndex(toIndex),
   };
+
+  return simplifySanMove(game, sanMove);
 }
