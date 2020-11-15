@@ -1,22 +1,8 @@
 import { getMoves } from "./moves";
 import { findBoardIndices } from "./board";
-import {
-  isCellColor,
-  getSANFromIndex,
-  getCellPiece,
-  getSANPieceType,
-  isEmptyCell,
-} from "./utils";
+import { createSanMove } from "./chess";
+import { isCellColor } from "./utils";
 import { moveCommand, passCommand } from "./command";
-
-function indicesToMove(board, fromIndex, toIndex) {
-  return {
-    piece: getSANPieceType(getCellPiece(board[fromIndex])),
-    dis: getSANFromIndex(fromIndex),
-    capture: isEmptyCell(board[toIndex]) ? "" : "x",
-    dest: getSANFromIndex(toIndex),
-  };
-}
 
 export default function AI(game, color) {
   // Find random move (best case very good AI)
@@ -27,7 +13,7 @@ export default function AI(game, color) {
     (acc, fromIndex) =>
       acc.concat(
         getMoves(game.board, fromIndex).map((toIndex) =>
-          indicesToMove(game.board, fromIndex, toIndex)
+          createSanMove(game.board, { fromIndex, toIndex })
         )
       ),
     []

@@ -3,10 +3,14 @@ import { getMoves } from "./moves";
 import { findBoardIndices } from "./board";
 import {
   getCellValue,
+  getCellPiece,
   getXYFromSAN,
   getXYFromIndex,
   getIndexFromSAN,
   getPieceTypeFromSAN,
+  getSANFromIndex,
+  getSANPieceType,
+  isEmptyCell,
 } from "./utils";
 
 function distinguishIndex(index, dis) {
@@ -64,8 +68,13 @@ export function nextTurn(game) {
   };
 }
 
-export function makeMove(game, move) {
-  const { fromIndex, toIndex } = validateMove(game, move);
+export function makeMove(game, sanMove) {
+  const result = validateMove(game, sanMove);
+  if (result.error) {
+    return game;
+  }
+
+  const { fromIndex, toIndex } = result;
 
   // Make move on board
   const board = game.board.slice();
@@ -80,6 +89,16 @@ export function makeMove(game, move) {
     ...game,
     board,
     turn,
-    moves: [...game.moves, move],
+    moves: [...game.moves, sanMove],
+  };
+}
+
+export function createSanMove(board, indexMove) {
+  const { fromIndex, toIndex } = indexMove;
+  return {
+    piece: getSANPieceType(getCellPiece(board[fromIndex])),
+    dis: getSANFromIndex(fromIndex),
+    capture: isEmptyCell(board[toIndex]) ? "" : "x",
+    dest: getSANFromIndex(toIndex),
   };
 }
