@@ -55,3 +55,9 @@ PieceNames[0x23] = "black rook";
 PieceNames[0x24] = "black bishop";
 PieceNames[0x25] = "black knight";
 PieceNames[0x26] = "black pawn";
+
+export const GameResult = {
+  white: "1-0",
+  black: "0-1",
+  draw: "½–½",
+};

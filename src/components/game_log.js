@@ -12,6 +12,7 @@ function view(state$) {
     return (
       <div class={{ [styles.container]: true }}>
         {state.moves.map((x) => viewEvent(x))}
+        {state.result ? <div>{state.result}</div> : ""}
       </div>
     );
   });

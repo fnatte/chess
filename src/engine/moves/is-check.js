@@ -1,7 +1,7 @@
 import { PieceColor, PieceType } from "../constants";
 import { findBoardIndices } from "../board";
 import { getCellPiece, isWhite, isBlack } from "../utils";
-import { getMoves } from "./index";
+import getMoves from "./get-moves";
 
 function capturesKing(board, toIndex) {
   return getCellPiece(board[toIndex]) === PieceType.king;

@@ -1,6 +1,6 @@
 import { isCellColor } from "../utils";
 import { findBoardIndices } from "../board";
-import { getMoves } from ".";
+import getMoves from "./get-moves";
 import isCheck from "./is-check";
 
 function hasMoves(board, color) {

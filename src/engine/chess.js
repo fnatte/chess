@@ -1,5 +1,5 @@
-import { PieceColor, PieceType } from "./constants";
-import { getMoves } from "./moves";
+import { PieceColor, PieceType, GameResult } from "./constants";
+import { getMoves, isCheckmate } from "./moves";
 import { findBoardIndices } from "./board";
 import {
   getCellValue,
@@ -82,13 +82,19 @@ function simplifySanMove(game, sanMove) {
   };
 }
 
+function getWinnerFromColor(color) {
+  return color === PieceColor.white
+    ? GameResult.whiteWinner
+    : GameResult.blackWinner;
+}
+
 export function makeMove(game, sanMove) {
-  const result = validateMove(game, sanMove);
-  if (result.error) {
+  const validationResult = validateMove(game, sanMove);
+  if (validationResult.error) {
     return game;
   }
 
-  const { fromIndex, toIndex } = result;
+  const { fromIndex, toIndex } = validationResult;
 
   // Make move on board
   const board = game.board.slice();
@@ -99,11 +105,17 @@ export function makeMove(game, sanMove) {
   const turn =
     game.turn === PieceColor.white ? PieceColor.black : PieceColor.white;
 
+  // Check for mate
+  const result = isCheckmate(game.board, game.turn)
+    ? getWinnerFromColor(game.turn)
+    : null;
+
   return {
     ...game,
     board,
     turn,
     moves: [...game.moves, simplifySanMove(game, sanMove)],
+    result,
   };
 }
 
