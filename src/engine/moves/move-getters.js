@@ -103,6 +103,13 @@ const moveDescriptions = {
 
 const moveGetters = map(buildMovesGetter, moveDescriptions);
 
+export const getPawnMoves = moveGetters.pawn;
+export const getRookMoves = moveGetters.rook;
+export const getBishopMoves = moveGetters.bishop;
+export const getQueenMoves = moveGetters.queen;
+export const getKingMoves = moveGetters.king;
+export const getKnightMoves = moveGetters.knight;
+
 export const test = {
   moveLeft,
   isEmptyCellCond,

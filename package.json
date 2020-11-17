@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack serve",
-    "lint": "eslint --fix 'src/**/*.js",
+    "lint": "eslint --fix src/**/*.js",
     "test": "jest"
   },
   "author": "Matteus Hemström",

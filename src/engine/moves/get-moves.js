@@ -1,18 +1,5 @@
-import { pipe, prop, __ } from "ramda";
-import { getCellPiece, getPieceName } from "../utils";
-import moveGetters from "./move-getters";
+import getPieceMoves from "./get-piece-moves";
 
-const getMovesFunctionByCell = pipe(
-  getCellPiece,
-  getPieceName,
-  prop(__, moveGetters)
-);
-
-const getMoves = (board, index) =>
-  getMovesFunctionByCell(board[index])(board, index);
+const getMoves = (board, index) => getPieceMoves(board, index);
 
 export default getMoves;
-
-export const test = {
-  getMovesFunctionByCell,
-};
