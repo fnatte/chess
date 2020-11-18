@@ -6,7 +6,7 @@ import { html } from "snabbdom-jsx";
 import { div, input } from "@cycle/dom";
 import styles from "./command_input.css";
 import { parseMove } from "../engine/san";
-import { validateMove } from "../engine/chess";
+import { validateMove } from "../engine/game";
 import { moveCommand } from "../engine/command";
 
 const NO_FEEDBACK = { text: "", status: "" };

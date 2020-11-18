@@ -1,4 +1,4 @@
-import { makeMove, nextTurn } from "./chess";
+import { makeMove, nextTurn } from "./game";
 
 export const moveCommand = (move) => (game) => makeMove(game, move);
 
