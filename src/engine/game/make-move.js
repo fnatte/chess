@@ -25,7 +25,7 @@ export default function makeMove(game, sanMove) {
     game.turn === PieceColor.white ? PieceColor.black : PieceColor.white;
 
   // Check for mate
-  const result = isCheckmate(game.board, game.turn)
+  const result = isCheckmate(board, turn)
     ? getWinnerFromColor(game.turn)
     : null;
 

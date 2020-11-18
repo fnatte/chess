@@ -25,4 +25,14 @@ describe("isCheck", () => {
     );
     expect(isCheck(board, PieceColor.white)).toBe(true);
   });
+
+  it("should find white in check 2", () => {
+    const { board } = fen("3k4/8/8/8/8/8/1r6/r4K2 w - - 0 1");
+    expect(isCheck(board, PieceColor.white)).toBe(true);
+  });
+
+  it("should find black in check 2", () => {
+    const { board } = fen("3kQ3/8/8/8/8/4R3/r6B/3K4 b - - 0 1");
+    expect(isCheck(board, PieceColor.black)).toBe(true);
+  });
 });

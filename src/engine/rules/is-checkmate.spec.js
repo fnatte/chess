@@ -27,8 +27,18 @@ describe("isCheckmate", () => {
     expect(isCheckmate(board, PieceColor.white)).toBe(false);
   });
 
-  xit("should find white is in check", () => {
-    const { board } = fen("3k4/8/8/8/8/8/r7/r2K4 w - - 0 1");
+  it("should find black is mate", () => {
+    const { board } = fen("3k4/3Q4/8/8/8/3R4/r7/3K4 b - - 0 1");
+    expect(isCheckmate(board, PieceColor.black)).toBe(true);
+  });
+
+  it("should find black is mate", () => {
+    const { board } = fen("3k4/8/8/8/8/8/1r6/r4K2 w - - 0 1");
     expect(isCheckmate(board, PieceColor.white)).toBe(true);
+  });
+
+  it("should find black is mate 2", () => {
+    const { board } = fen("3kQ3/8/8/8/8/4R3/r6B/3K4 b - - 0 1");
+    expect(isCheckmate(board, PieceColor.black)).toBe(true);
   });
 });
