@@ -1,21 +1,8 @@
-import { PieceType, PieceColor } from "./constants";
-import { getCellValue } from "./utils";
+import { PieceType, PieceColor } from "../constants";
+import { getCellValue } from "../utils";
+import emptyBoard from "./empty-board";
 
-export function emptyBoard() {
-  return Array(64).fill(PieceType.empty);
-}
-
-export function findBoardIndices(board, fn) {
-  return board.reduce((indices, cell, index) => {
-    if (fn(cell)) {
-      indices.push(index);
-    }
-
-    return indices;
-  }, []);
-}
-
-export function createBoard() {
+export default function createBoard() {
   const board = emptyBoard();
 
   // Place pawns
@@ -45,11 +32,4 @@ export function createBoard() {
   board[63] = getCellValue(PieceType.rook, PieceColor.black);
 
   return board;
-}
-
-export function placePiece(board, desc) {
-  const newBoard = board.slice();
-  newBoard[desc.index] = getCellValue(desc.type, desc.color);
-
-  return newBoard;
 }

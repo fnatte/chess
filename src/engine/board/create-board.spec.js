@@ -1,4 +1,4 @@
-import { createBoard } from "./board";
+import createBoard from "./create-board";
 
 describe("createBoard()", () => {
   it("should have length 64", () => {
