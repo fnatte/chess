@@ -1,6 +1,6 @@
 import { PieceColor, PieceType, GameResult } from "./constants";
 import { getMoves, isCheckmate } from "./moves";
-import { findBoardIndices } from "./board";
+import { findBoardIndices, movePiece } from "./board";
 import {
   getCellValue,
   getCellPiece,
@@ -96,10 +96,7 @@ export function makeMove(game, sanMove) {
 
   const { fromIndex, toIndex } = validationResult;
 
-  // Make move on board
-  const board = game.board.slice();
-  board[toIndex] = board[fromIndex];
-  board[fromIndex] = 0;
+  const board = movePiece(game.board, fromIndex, toIndex);
 
   // Change turn
   const turn =

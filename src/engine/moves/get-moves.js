@@ -1,4 +1,5 @@
 import { getCellColor } from "../utils";
+import { movePiece } from "../board";
 import getPieceMoves from "./get-piece-moves";
 import isCheck from "./is-check";
 
@@ -6,10 +7,7 @@ const getMoves = (board, index) => {
   const moves = getPieceMoves(board, index);
 
   return moves.filter((toIndex) => {
-    // Make move on board copy
-    const boardCopy = board.slice();
-    boardCopy[toIndex] = boardCopy[index];
-    boardCopy[index] = 0;
+    const boardCopy = movePiece(board, index, toIndex);
 
     // Test if player is in check after this move
     if (isCheck(boardCopy, getCellColor(board[index]))) {
