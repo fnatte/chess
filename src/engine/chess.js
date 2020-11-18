@@ -1,5 +1,5 @@
 import { PieceColor, PieceType, GameResult } from "./constants";
-import { getMoves, isCheckmate } from "./moves";
+import { getMoves, isCheckmate } from "./rules";
 import { findBoardIndices, movePiece } from "./board";
 import {
   getCellValue,

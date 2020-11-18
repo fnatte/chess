@@ -1,4 +1,4 @@
-import { getMoves } from "./moves";
+import { getMoves } from "./rules";
 import { findBoardIndices } from "./board";
 import { createSanMove } from "./chess";
 import { isCellColor } from "./utils";
