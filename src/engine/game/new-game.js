@@ -1,5 +1,5 @@
-import { createBoard } from "./board";
-import { PieceColor } from "./constants";
+import { createBoard } from "../board";
+import { PieceColor } from "../constants";
 
 export default function newGame() {
   return {

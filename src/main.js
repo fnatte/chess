@@ -4,7 +4,7 @@ import { run } from "@cycle/xstream-run";
 import delay from "xstream/extra/delay";
 import { div, makeDOMDriver } from "@cycle/dom";
 import isolate from "@cycle/isolate";
-import newGame from "./engine/new-game";
+import { newGame } from "./engine/game";
 import { PieceColor } from "./engine/constants";
 import AI from "./engine/ai";
 import Board from "./components/board";
